@@ -11,7 +11,5 @@ namespace RestaurantRaterAPI.Models
         [Required]
         [MaxLength(100)]
         public string Location {get; set; }
-
-
     }
 }
