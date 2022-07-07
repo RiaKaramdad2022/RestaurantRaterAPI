@@ -17,9 +17,9 @@ namespace RestaurantRaterAPI.Controllers
         {
             _context = context;
         }
-    [HttpPost]
-    public async Task<IActionResult> PostRestaurant([FromForm] RestaurantEdit model )
-    {
+        [HttpPost]
+        public async Task<IActionResult> PostRestaurant([FromForm] RestaurantEdit model )
+        {
         if(!ModelState.IsValid)
         {
             return BadRequest(ModelState);
@@ -30,7 +30,7 @@ namespace RestaurantRaterAPI.Controllers
             Location = model.Location,
         });
         await _context.SaveChangesAsync();
-            return Ok();
+        return Ok();
     }
 
     [HttpGet]
@@ -48,47 +48,46 @@ namespace RestaurantRaterAPI.Controllers
         if(restaurant == null) {
             return NotFound();
         }
-            return Ok(restaurant);
+        return Ok(restaurant);
     }
 
-    // [HttpPut]
-    // [Route("{id}")]
-    // public async Task<IActionResult> UpdateRestaurant([FromForm] RestaurantEdit model, [FromRoute] int id)
-    // {
+    [HttpPut]
+    [Route("{id}")]
+    public async Task<IActionResult> UpdateRestaurant([FromForm] RestaurantEdit model, [FromRoute] int id)
+    {
+        var oldRestaurant = await _context.Restaurants.FindAsync(id);
+        if(oldRestaurant == null)
+        {
+            return NotFound();
+        }
+        if(!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+        if(!string.IsNullOrEmpty(model.Name))
+        {
+            oldRestaurant.Name = model.Name;
+        }
+        if(!string.IsNullOrEmpty(model.Location))
+        {
+            oldRestaurant.Location = model.Location;
+        }
+        await _context.SaveChangesAsync();
+            return Ok();
+    }
 
-    // }
-    // var oldRestaurant = await _context.Restaurants.FindAsync(id);
-    // if(oldRestaurant == null)
-    // {
-    //     return NotFound();
-    // }
-    // if(!ModelState.IsValid)
-    // {
-    //     return BadRequest();
-    // }
-    // if(!string.IsNullOrEmpty(model.Name))
-    // {
-    //     oldRestaurant.Name = model.Name;
-    // }
-    // if(!string.IsNullOrEmpty(model.Location))
-    // {
-    //     oldRestaurant.Location = model.Location;
-    // }
-    // await _context.SaveChangesAsync();
-    // return Ok();
-
-    // [HttpDelete]
-    // [Route("{id}")]
-    // public async Task<IActionResult> DeleteRestaurant([FromForm]) int id)
-    // {
-    //     var restaurant = await _context.Restaurants.FindAsync(id);
-    //         if(restaurant == null)
-    //     {
-    //         return NotFound();
-    //     }
-    //     _context.Restaurants.Remove(restaurant);
-    //     await _context.SaveChangesAsync();
-    //         return Ok();
-    //     }
+    [HttpDelete]
+    [Route("{id}")]
+    public async Task<IActionResult> DeleteRestaurant([FromForm] int id)
+    {
+        var restaurant = await _context.Restaurants.FindAsync(id);
+        if(restaurant == null)
+            {
+            return NotFound();
+            }
+            _context.Restaurants.Remove(restaurant);
+            await _context.SaveChangesAsync();
+            return Ok();
+        }   
     }
 }
